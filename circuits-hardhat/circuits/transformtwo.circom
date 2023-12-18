@@ -61,12 +61,17 @@ template TransformTwo(W, H) {
     signal input inColor;
     signal input outColor;
     signal output out[W][H];
+
+    assert(onOff == 0 || onOff == 1);
+    
+    signal transformTwoInColoring <== (onOff * inColor) - (1 - onOff);
+    signal transformTwoOutColoring <== onOff * outColor;
+    signal mask[W][H];
+    signal mask2[W][H];
+
     component isEqCurr[W][H];
     component isEqPrev[W][H];
     component quinSelCurr[W][H];
-    // component quinSelPrev[W][H];
-    signal mask[W][H];
-    signal mask2[W][H];
 
     for (var i = 0; i < W; i++) {
         var noTransformations = 0;
@@ -76,22 +81,21 @@ template TransformTwo(W, H) {
             quinSelCurr[i][j].indexOne <== j - noTransformations;
 
             isEqPrev[i][j] = IsEqual();
-            isEqPrev[i][j].in[0] <== j ? out[i][j-1] : -1;
-            isEqPrev[i][j].in[1] <== inColor;
+            isEqPrev[i][j].in[0] <== j ? out[i][j-1] : -2;
+            isEqPrev[i][j].in[1] <== transformTwoInColoring;
 
             noTransformations += isEqPrev[i][j].out;
             quinSelCurr[i][j].indexTwo <== j - noTransformations + 1;
 
             mask[i][j] <== (1 - isEqPrev[i][j].out) * quinSelCurr[i][j].out[0];
-            out[i][j] <== mask[i][j] + isEqPrev[i][j].out * outColor;
-
+            out[i][j] <== mask[i][j] + isEqPrev[i][j].out * transformTwoOutColoring;
 
             isEqCurr[i][j] = IsEqual();
             isEqCurr[i][j].in[0] <== j ? out[i][j] : grid[i][0];
-            isEqCurr[i][j].in[1] <== inColor;
+            isEqCurr[i][j].in[1] <== transformTwoInColoring;
 
             mask2[i][j] <== (1 - isEqCurr[i][j].out) * quinSelCurr[i][j].out[1];
-            out[i][j+1] <== mask2[i][j] + isEqCurr[i][j].out * outColor;
+            out[i][j+1] <== mask2[i][j] + isEqCurr[i][j].out * transformTwoOutColoring;
 
             noTransformations += isEqCurr[i][j].out;
         }

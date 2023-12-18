@@ -5,9 +5,12 @@ template Stack(W, H) {
     signal input grid[W][H];
     signal input onOff;
     signal input color;
+    signal output out[W][H];
+
+    assert(onOff == 0 || onOff == 1);
+
     signal stack[W][H];
     signal stackColoring <== onOff * color;
-    signal output out[W][H];
 
     component isZeroStack[W][H];
     component gtZeroStack[W][H];
