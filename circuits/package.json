@@ -1,51 +1,26 @@
 {
-  "name": "circuits",
-  "version": "0.1.0",
-  "description": "Zk app circuits",
-  "main": "dist/src/index.js",
-  "types": "src/index.ts",
-  "author": "Wanseob Lim<email@wanseob.com>",
-  "files": [
-    "src",
-    "dist",
-    "zk",
-    "circuits",
-    "browser"
-  ],
-  "scripts": {
-    "test": "ts-mocha -p tsconfig.json test/**/*.ts --timeout 30000 --exit",
-    "pretest": "tsc -p tsconfig.json",
-    "precompile": "scripts/prerequisites.sh && mkdir -p zk/circuits zk/zkeys zk/verifiers",
-    "postbuild": "cp zk/zkeys/main.zkey ../app/public && cp zk/circuits/main_js/main.wasm ../app/public",
-    "compile": "for circuit in circuits/*.circom; do circom $circuit --r1cs --sym --wasm -o zk/circuits;done && tsc",
-    "export:sample-zkey": "for circuit in zk/circuits/*.r1cs; do snarkjs groth16 setup $circuit powersOfTau28_hez_final_15.ptau zk/zkeys/$(basename -- $circuit .r1cs).zkey;done",
-    "export:verifier": "for zkey in zk/zkeys/*.zkey; do snarkjs zkey export solidityverifier $zkey zk/verifiers/$(basename -- $zkey .zkey | perl -nE 'say ucfirst').sol;done",
-    "build": "yarn compile && yarn export:sample-zkey && yarn export:verifier"
-  },
+  "name": "circuits-hardhat",
+  "version": "1.0.0",
+  "main": "index.js",
   "license": "MIT",
-  "dependencies": {
-    "@ethersproject/abstract-signer": "^5.6.0",
-    "circomlib": "^2.0.3",
-    "circomlibjs": "^0.1.2",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-promise": "^5.2.0",
-    "ethers": "^5.6.4"
-  },
   "devDependencies": {
-    "@types/chai": "^4.3.1",
-    "@types/mocha": "^9.1.0",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
     "chai": "^4.3.6",
-    "ts-mocha": "^9.0.2"
+    "hardhat": "^2.9.1",
+    "hardhat-circom": "^3.3.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
   },
   "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
+    "node": ">=16"
+  },
+  "scripts": {
+    "circom:dev": "hardhat circom  --circuit main --deterministic --debug --verbose",
+    "circom:prod": "hardhat circom --circuit main --verbose",
+    "test": "hardhat test",
+    "postbuild": "mkdir ../app/public/zk  & cp ./node_modules/snarkjs/build/snarkjs.min.js ../app/public/zk & cp artifacts/circom/main.wasm ../app/public/zk && cp artifacts/circom/main.zkey ../app/public/zk",
+    "pad-puzzles": "ts-node utils/padPuzzles.ts",
+    "transform-puzzles": "ts-node utils/transform.ts",
+    "stack-puzzles": "ts-node utils/stack.ts",
+    "transformtwo-puzzles": "ts-node utils/transformTwo.ts"
   }
 }

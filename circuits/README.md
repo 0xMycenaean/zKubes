@@ -1,27 +1,15 @@
-# @zkporc/circuits
+## Install
 
-1. Compile Circuits
+`yarn` to install dependencies
 
-   ```
-   yarn compile
-   ```
+## Development builds
 
-2. Export Sample ZKeys(only for dev purpose)
+`yarn circom:dev` to build deterministic development circuits.
 
-   ```
-   yarn export:sample-zkey
-   ```
+Further, for debugging purposes, you may wish to inspect the intermediate files. This is possible with the `--debug` flag which the `circom:dev` task enables by default. You'll find them (by default) in `artifacts/circom/`
 
-3. Export Sample Solidity Verifiers
+To build a single circuit during development, you can use the `--circuit` CLI parameter. For example, if you make a change to `hash.circom` and you want to _only_ rebuild that, you can run `yarn circom:dev --circuit hash`.
 
-   ```
-   yarn export:verifier
-   ```
+## Production builds
 
-4. Complete Trusted Setup and replace the zkeys w/ the final zkeys
-
-5. Export and update solidity verifiers
-
-   ```
-   yarn export:verifier
-   ```
+`yarn circom:prod` for production builds (using `Date.now()` as entropy)

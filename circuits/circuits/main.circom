@@ -1,65 +1,8 @@
 pragma circom 2.0.0;
 include "../../node_modules/circomlib/circuits/comparators.circom";
-
-template Transform(W, H) {
-    signal input grid[W][H];
-    // type(): 0 (do not transform, but perserve) | 1 | 2 | 3 | 4
-    signal input inColor;
-    // type(): 0 (do not transform, but perserve) | 1 | 2 | 3 | 4
-    signal input outColor;
-    signal margin[W][H];
-    signal mask[W][H];
-    component isOneTransform[W][H];
-
-    signal output out[W][H];
-    
-    for (var i = 0; i < W; i++) {
-        for (var j = 0; j < H; j++) {
-            // checking for == 1
-            // 1st step
-            margin[i][j] <== outColor - grid[i][j];
-            // 2nd step
-            isOneTransform[i][j] = IsEqual();
-            isOneTransform[i][j].in[0] <== grid[i][j];
-            isOneTransform[i][j].in[1] <== inColor;
-            // 3rd step
-            mask[i][j] <== isOneTransform[i][j].out * margin[i][j];
-            // 4th step
-            out[i][j] <== grid[i][j] + mask[i][j];
-        }
-    }
-}
-
-template Stack(W, H) {
-    signal input grid[W][H];
-    signal input onOff;
-    signal input color;
-    signal stack[W][H];
-    signal stackColoring <== onOff * color;
-    signal output out[W][H];
-
-    component isZeroStack[W][H];
-    component gtZeroStack[W][H];
-
-    for (var i = 0; i < W; i++) {
-        stack[i][0] <== 0;
-        for (var j = 1; j < H; j++) {
-            var prevIndex = j - 1;
-
-            // checking for == 0
-            isZeroStack[i][j] = IsZero();
-            isZeroStack[i][j].in <== grid[i][j];
-
-            // checking for gt 0
-            gtZeroStack[i][j] = GreaterThan(4);
-            gtZeroStack[i][j].in[0] <== grid[i][prevIndex];
-            gtZeroStack[i][j].in[1] <== 0;
-
-            stack[i][j] <== isZeroStack[i][j].out * gtZeroStack[i][j].out;
-            out[i][prevIndex] <== grid[i][prevIndex] + stack[i][prevIndex]  * stackColoring;
-        }
-    }
-}
+include "./transform.circom";
+include "./stack.circom";
+include "./transformtwo.circom";
 
 template ZKubes(W, H, F) {
     // public
@@ -75,8 +18,24 @@ template ZKubes(W, H, F) {
     // F rounds for each of the Function
     component transform[F];
     component stack[F];
+    component transformTwo[F]; 
 
-    // !!! TODO: add onOff check !!!
+    for(var i = 0; i < F; i++) {
+        var onOffCount = 0;
+        for(var j = 0; j     < F; j++) {
+            // checking if onOff is 0 or 1
+            assert(0 == selectedFunctions[i][j][0] || 1 == selectedFunctions[i][j][0]);
+            // checking that if onOff is 0 then all other elements are 0
+            if(selectedFunctions[i][j][0] == 0) {
+                assert(selectedFunctions[i][j][1] == 0);
+                assert(selectedFunctions[i][j][2] == 0);
+            }
+            onOffCount += selectedFunctions[i][j][0];
+        }
+        // checking there is only one onOff == 1
+        assert(0 == onOffCount || 1 == onOffCount);
+    }
+
     // 1. check - if onOff == 0 then all other elements should be 0
     // 2. check - there could be only 1 element == 1 at the same index in all calls combined
 
@@ -91,22 +50,31 @@ template ZKubes(W, H, F) {
         }
     }  
 
-    for (var i = 0; i < F; i++) {
+     for (var i = 0; i < F; i++) {
         // for (var j = 0; j < F; j++) {
             var indexPlusOne = i + 1;
+            var indexPlusTwo = i + 2;
 
             transform[i] = Transform(W, H);
             transform[i].grid <== intermediateGrids[i][0];
+            transform[i].onOff <== selectedFunctions[i][0][0];
             transform[i].inColor <== selectedFunctions[i][0][1];
             transform[i].outColor <== selectedFunctions[i][0][2];
-            intermediateGrids[i][indexPlusOne] <== transform[i].out;
+            intermediateGrids[i][1] <== transform[i].out;
 
             stack[i] = Stack(W, H);
-            stack[i].grid <== intermediateGrids[i][indexPlusOne];
+            stack[i].grid <== intermediateGrids[i][1];
             stack[i].onOff <== selectedFunctions[i][1][0];
             stack[i].color <== selectedFunctions[i][1][1];
+            intermediateGrids[i][2] <== stack[i].out;
 
-            intermediateGrids[indexPlusOne][0] <== stack[i].out;
+            transformTwo[i] = TransformTwo(W, H);
+            transformTwo[i].grid <== intermediateGrids[i][2];
+            transformTwo[i].onOff <== selectedFunctions[i][2][0];
+            transformTwo[i].inColor <== selectedFunctions[i][2][1];
+            transformTwo[i].outColor <== selectedFunctions[i][2][2];
+
+            intermediateGrids[indexPlusOne][0] <== transformTwo[i].out;
     }
 
     finishingGrid <== intermediateGrids[F][0];
@@ -146,4 +114,4 @@ template ZKubes(W, H, F) {
     eqCheck.in[1] <== 1;
 }
 
-component main { public [initialGrid, finalGrid, account] } = ZKubes(8, 8, 2);
+component main { public [initialGrid, finalGrid, account] } = ZKubes(8, 8, 3);
