@@ -9,6 +9,7 @@ const puzzles: Puzzles = require("./data/puzzles.json");
 describe.only("stack circuit", () => {
   let circuit: CircuitTestUtils;
   const sanityCheck = true;
+  const initialGrid = puzzles[0.2].initial;
 
   before(async () => {
     circuit = await hre.circuitTest.setup("test/stack_test");
@@ -16,16 +17,7 @@ describe.only("stack circuit", () => {
 
   it("produces a witness with valid constraints", async () => {
     const witness = await circuit.calculateWitness(
-      { grid: puzzles[0.2].initial, onOff: 1, color: 1 },
-      sanityCheck
-    );
-
-    await circuit.checkConstraints(witness);
-  });
-
-  it("has valid constraints", async () => {
-    const witness = await circuit.calculateWitness(
-      { grid: puzzles[0.2].initial, onOff: 1, color: 1 },
+      { grid: initialGrid, onOff: 1, color: 1 },
       sanityCheck
     );
 
@@ -34,7 +26,7 @@ describe.only("stack circuit", () => {
 
   it("has expected witness values", async () => {
     const witness = await circuit.calculateLabeledWitness(
-      { grid: puzzles[0.2].initial, onOff: 1, color: 1 },
+      { grid: initialGrid, onOff: 1, color: 1 },
       sanityCheck
     );
 
@@ -51,7 +43,7 @@ describe.only("stack circuit", () => {
 
   it("produces expected witness values", async () => {
     const witness = await circuit.calculateLabeledWitness(
-      { grid: puzzles[0.2].initial, onOff: 1, color: 1 },
+      { grid: initialGrid, onOff: 1, color: 1 },
       sanityCheck
     );
 

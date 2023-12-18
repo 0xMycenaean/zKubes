@@ -1,32 +1,32 @@
 import { Colors, OnOff } from "../test/data/puzzles.types";
+import { CircuitFunctions } from "./enums/circuitFunctions.enum";
 
 const FUNCTION_ORDER = ["TRANSFORM", "STACK", "TRANSFORMTWO"];
 
-const ARGUMENTS = {
-  EMPTY: [OnOff.Off, 0, 0],
-  // STACK
-  STACK_YELLOW: [OnOff.On, Colors.Yellow, 0],
-  STACK_RED: [OnOff.On, Colors.Red, 0],
-  STACK_BLUE: [OnOff.On, Colors.Blue, 0],
+export function argumentBuilder(
+  arg: keyof typeof CircuitFunctions
+): [OnOff.On, Colors, Colors] {
+  const colorIn = arg.split("_")[1];
+  const colorOut = arg.split("_")[2];
 
-  // TRANSFORM
-  TRANSFORM_YELLOW_RED: [OnOff.On, Colors.Yellow, Colors.Red],
-  TRANSFORM_YELLOW_BLUE: [OnOff.On, Colors.Yellow, Colors.Blue],
-  TRANSFORM_RED_YELLOW: [OnOff.On, Colors.Red, Colors.Yellow],
-  TRANSFORM_RED_BLUE: [OnOff.On, Colors.Red, Colors.Blue],
-  TRANSFORM_BLUE_YELLOW: [OnOff.On, Colors.Blue, Colors.Yellow],
-  TRANSFORM_BLUE_RED: [OnOff.On, Colors.Blue, Colors.Red],
+  return [
+    OnOff.On,
+    colorIn === "YELLOW"
+      ? Colors.Yellow
+      : colorIn === "RED"
+      ? Colors.Red
+      : Colors.Blue,
+    colorOut === "YELLOW"
+      ? Colors.Yellow
+      : colorOut === "RED"
+      ? Colors.Red
+      : Colors.Blue,
+  ];
+}
 
-  // TRANSFORM TWO
-  TRANSFORMTWO_YELLOW_RED: [OnOff.On, Colors.Yellow, Colors.Red],
-  TRANSFORMTWO_YELLOW_BLUE: [OnOff.On, Colors.Yellow, Colors.Blue],
-  TRANSFORMTWO_RED_YELLOW: [OnOff.On, Colors.Red, Colors.Yellow],
-  TRANSFORMTWO_RED_BLUE: [OnOff.On, Colors.Red, Colors.Blue],
-  TRANSFORMTWO_BLUE_YELLOW: [OnOff.On, Colors.Blue, Colors.Yellow],
-  TRANSFORMTWO_BLUE_RED: [OnOff.On, Colors.Blue, Colors.Red],
-};
-
-export function functionBuilder(args: (keyof typeof ARGUMENTS)[]) {
+export function argumentBuilderMain(
+  args: (keyof typeof CircuitFunctions)[]
+): number[][][] {
   const numSelectedFunctions = args.length;
   const numAvailableFunctions = FUNCTION_ORDER.length;
   // cannot set nested array in JS only with fill due to object references
@@ -39,8 +39,7 @@ export function functionBuilder(args: (keyof typeof ARGUMENTS)[]) {
   args.forEach((arg, i) => {
     const func = arg.split("_")[0];
     const index = FUNCTION_ORDER.indexOf(func);
-
-    if (arg !== "EMPTY") argumentsArray[i][index] = ARGUMENTS[arg];
+    argumentsArray[i][index] = argumentBuilder(arg);
   });
 
   return argumentsArray;
