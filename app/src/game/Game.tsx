@@ -81,7 +81,10 @@ export default function Game() {
         </div>
         <div className={styles.chosenFunctions}></div>
         <div className={styles.actions}>
-          <button>submit solution</button>
+          <GenerateProof
+            inputSignals={inputSignals}
+            onResult={(result) => setProof(result)}
+          />
         </div>
       </div>
       <div className={styles.footer}>
@@ -95,11 +98,6 @@ export default function Game() {
           <span>5</span>
         </h4>
       </div>
-
-      <GenerateProof
-        inputSignals={inputSignals}
-        onResult={(result) => setProof(result)}
-      />
     </div>
   );
 }
