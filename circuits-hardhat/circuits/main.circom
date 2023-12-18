@@ -20,7 +20,22 @@ template ZKubes(W, H, F) {
     component stack[F];
     component transformTwo[F]; 
 
-    // !!! TODO: add onOff check !!!
+    for(var i = 0; i < F; i++) {
+        var onOffCount = 0;
+        for(var j = 0; j     < F; j++) {
+            // checking if onOff is 0 or 1
+            assert(0 == selectedFunctions[i][j][0] || 1 == selectedFunctions[i][j][0]);
+            // checking that if onOff is 0 then all other elements are 0
+            if(selectedFunctions[i][j][0] == 0) {
+                assert(selectedFunctions[i][j][1] == 0);
+                assert(selectedFunctions[i][j][2] == 0);
+            }
+            onOffCount += selectedFunctions[i][j][0];
+        }
+        // checking there is only one onOff == 1
+        assert(0 == onOffCount || 1 == onOffCount);
+    }
+
     // 1. check - if onOff == 0 then all other elements should be 0
     // 2. check - there could be only 1 element == 1 at the same index in all calls combined
 
@@ -42,6 +57,7 @@ template ZKubes(W, H, F) {
 
             transform[i] = Transform(W, H);
             transform[i].grid <== intermediateGrids[i][0];
+            transform[i].onOff <== selectedFunctions[i][0][0];
             transform[i].inColor <== selectedFunctions[i][0][1];
             transform[i].outColor <== selectedFunctions[i][0][2];
             intermediateGrids[i][1] <== transform[i].out;
@@ -58,7 +74,7 @@ template ZKubes(W, H, F) {
             transformTwo[i].inColor <== selectedFunctions[i][2][1];
             transformTwo[i].outColor <== selectedFunctions[i][2][2];
 
-            intermediateGrids[indexPlusOne][0] <== stack[i].out;
+            intermediateGrids[indexPlusOne][0] <== transformTwo[i].out;
     }
 
     finishingGrid <== intermediateGrids[F][0];
