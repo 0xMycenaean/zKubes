@@ -1,39 +1,40 @@
 .lobbies {
-    height: 80vh;
-    color: black;
-    margin-top: 15vh;
-    width: 100vw;
-    display: grid;
-    grid-template-rows: 10% 40% 50%;
-    text-align: center;
+  height: 80vh;
+  color: black;
+  margin-top: 15vh;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: 10% 40% 50%;
+  text-align: center;
 }
 
 .lobbies h1 {
-    color: black;
-
+  color: black;
 }
 
 .createLobby {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .availableLobbies {
-    margin: 3rem;
-    padding-left: 1rem;
-    padding-right: 1.5rem;
-    overflow-y: scroll;
-    border-collapse: collapse;
-    align-items: center;
-    text-align: center;
+  margin: 3rem;
+  padding-left: 1rem;
+  padding-right: 1.5rem;
+  overflow-y: scroll;
+  border-collapse: collapse;
+  align-items: center;
+  text-align: center;
 
-    & tr, th, td {
-            padding: 1rem;
-            border: 2px solid black;
-    }
+  & tr,
+  th,
+  td {
+    padding: 1rem;
+    border: 2px solid black;
+  }
 }
 
 .joinButton {
-    align-items: center;
+  align-items: center;
 }

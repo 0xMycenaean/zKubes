@@ -1,12 +1,12 @@
-"use client";
-import { Canvas } from "@react-three/fiber";
-import { Grid } from "./Grid";
-import { useEffect, useState } from "react";
-import { Vector3 } from "three";
-import styles from "../styles/puzzle.module.scss";
-import { functionMapping, idToMutator } from "../Puzzles";
-import { GenerateProof } from "../zk/GenerateProof";
-import { InputSignals, Proof } from "../zk/types";
+'use client';
+import { Canvas } from '@react-three/fiber';
+import { Grid } from './Grid';
+import { useEffect, useState } from 'react';
+import { Vector3 } from 'three';
+import styles from '../styles/puzzle.module.scss';
+import { functionMapping, idToMutator } from '../Puzzles';
+import { GenerateProof } from '../zk/GenerateProof';
+import { InputSignals, Proof } from '../zk/types';
 
 export function Puzzle({
   startingGrid,
@@ -43,7 +43,7 @@ export function Puzzle({
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
     ],
-    account: "0x123",
+    account: '0x123',
     selectedFunctions: [
       [
         [1, 2, 1],

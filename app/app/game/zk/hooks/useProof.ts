@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { InputSignals, Proof } from "../types";
-import { groth16 } from "snarkjs";
+import { useCallback } from 'react';
+import { InputSignals, Proof } from '../types';
+import { groth16 } from 'snarkjs';
 
 async function exportCallDataGroth16(
   input: InputSignals,
@@ -17,22 +17,22 @@ async function exportCallDataGroth16(
     ));
   } catch (err) {
     console.error(err);
-    throw new Error("Wrong answer!");
+    throw new Error('Wrong answer!');
   }
 
   const calldata = await groth16.exportSolidityCallData(_proof, _publicSignals);
 
   const argv = calldata
-    .replace(/["[\]\s]/g, "")
-    .split(",")
+    .replace(/["[\]\s]/g, '')
+    .split(',')
     .map((x: string) => BigInt(x).toString());
 
-  const a: Proof["a"] = [argv[0], argv[1]];
-  const b: Proof["b"] = [
+  const a: Proof['a'] = [argv[0], argv[1]];
+  const b: Proof['b'] = [
     [argv[2], argv[3]],
     [argv[4], argv[5]],
   ];
-  const c: Proof["c"] = [argv[6], argv[7]];
+  const c: Proof['c'] = [argv[6], argv[7]];
   const Input = [];
 
   for (let i = 8; i < argv.length; i++) {

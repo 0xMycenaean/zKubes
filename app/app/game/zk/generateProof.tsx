@@ -1,5 +1,5 @@
-import { useProof } from "./hooks/useProof";
-import { InputSignals, Proof } from "./types";
+import { useProof } from './hooks/useProof';
+import { InputSignals, Proof } from './types';
 
 export function GenerateProof({
   inputSignals: { initialGrid, finalGrid, account, selectedFunctions },
@@ -8,16 +8,16 @@ export function GenerateProof({
   inputSignals: InputSignals;
   onResult: (proof: Proof | string) => void;
 }) {
-  const proofCallback = useProof("./zk/main.wasm", "./zk/main.zkey");
+  const proofCallback = useProof('./zk/main.wasm', './zk/main.zkey');
 
   return (
     <button
       disabled={!initialGrid || !finalGrid || !account || !selectedFunctions}
       onClick={async () => {
-        if (!initialGrid) alert("Initial grid is not ready");
-        else if (!finalGrid) alert("finalGrid is not ready");
-        else if (!account) alert("account is not ready");
-        else if (!selectedFunctions) alert("selectedFunctions is not ready");
+        if (!initialGrid) alert('Initial grid is not ready');
+        else if (!finalGrid) alert('finalGrid is not ready');
+        else if (!account) alert('account is not ready');
+        else if (!selectedFunctions) alert('selectedFunctions is not ready');
         else {
           proofCallback({
             initialGrid,

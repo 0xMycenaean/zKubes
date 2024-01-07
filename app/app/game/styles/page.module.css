@@ -1,33 +1,32 @@
 .gameContainer {
-    display: grid;
-    height: 80vh;
-    grid-template-rows: 70% 30%;
+  display: grid;
+  height: 80vh;
+  grid-template-rows: 70% 30%;
 }
 
 .sceneContainer {
-    width: 50rem;
-    height: 50rem;
+  width: 50rem;
+  height: 50rem;
 }
 
 .footer {
-    box-sizing: border-box;
-    padding: 2rem;
-    position: fixed;
-    bottom: 0;
-    height: 7rem;
-    width: 100vw;
-    background-color: black;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  box-sizing: border-box;
+  padding: 2rem;
+  position: fixed;
+  bottom: 0;
+  height: 7rem;
+  width: 100vw;
+  background-color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .footer h4 {
-    color: white;
-    text-align: center;
+  color: white;
+  text-align: center;
 }
 
 .footer span {
-    font-size: 3rem;
+  font-size: 3rem;
 }
-
