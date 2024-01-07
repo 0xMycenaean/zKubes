@@ -1,18 +1,6 @@
 import { puzzleMapping } from "../Puzzles";
 import { Puzzle } from "./Puzzle";
 
-type PuzzleInit = {
-	startingGrid: string;
-	finalGrid: string;
-	availableFunctions: number[];
-};
-
-type Puzzle = {
-	startingGrid: number[][];
-	finalGrid: number[][];
-    availableFunctions: number[];
-};
-
 const mockPuzzle = puzzleMapping[1];
 
 function mapGrid(gridString: string): number[][] {
@@ -27,21 +15,12 @@ function mapGrid(gridString: string): number[][] {
 	return grid;
 }
 
-function mapPuzzle(puzzle: PuzzleInit): Puzzle {
-	return {
-		startingGrid: mapGrid(puzzle.startingGrid),
-		finalGrid: mapGrid(puzzle.finalGrid),
-        availableFunctions: puzzle.availableFunctions
-	};
-}
-
 export function Game() {
-	const puzzle = mapPuzzle(mockPuzzle);
 	return (
 		<Puzzle
-			startingGrid={puzzle.startingGrid}
-			finalGrid={puzzle.finalGrid}
-            availableFunctions={puzzle.availableFunctions}
+			startingGrid={mapGrid(mockPuzzle.startingGrid)}
+			finalGrid={mapGrid(mockPuzzle.finalGrid)}
+			availableFunctions={mockPuzzle.availableFunctions}
 		/>
 	);
 }
