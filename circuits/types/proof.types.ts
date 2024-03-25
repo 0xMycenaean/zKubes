@@ -4,7 +4,7 @@ export interface InputSignals {
   initialGrid: number[][];
   finalGrid: number[][];
   account: Hex;
-  selectedFunctionsIndexes: number[];
+  selectedFunctionsIndexes: number[][];
 }
 
 export interface Proof {

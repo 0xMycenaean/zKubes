@@ -1,6 +1,5 @@
 import { assert } from 'chai';
 import config from '../config';
-import { transformTwo } from '../utils/transformTwo';
 import { argumentBuilder } from '../utils/circuitFunctions';
 import { WasmTester, wasm } from 'circom_tester';
 import path from 'path';
@@ -13,7 +12,7 @@ describe.only('transformtwo circuit', () => {
   let circuit: WasmTester;
 
   const sanityCheck = true;
-  const initialGrid = puzzles[0.4].initial;
+  const initialGrid = puzzles[0.1].initial;
 
   before(async () => {
     circuit = await wasm(
@@ -22,12 +21,12 @@ describe.only('transformtwo circuit', () => {
   });
 
   it('produces a witness with valid constraints', async () => {
-    const [onOff, inColor, outColor] = argumentBuilder(
-      'TRANSFORMTWO_YELLOW_RED'
+    const [onOff, inColor, outColorBot, outColorTop] = argumentBuilder(
+      'TRANSFORMTWO_YELLOW_RED_YELLOW'
     );
 
     const witness = await circuit.calculateWitness(
-      { grid: initialGrid, onOff, inColor, outColor },
+      { grid: initialGrid, onOff, inColor, outColorBot, outColorTop },
       sanityCheck
     );
 
@@ -35,12 +34,13 @@ describe.only('transformtwo circuit', () => {
   });
 
   it('has expected witness values for onOff == 1', async () => {
-    const [onOff, inColor, outColor] = argumentBuilder(
-      'TRANSFORMTWO_YELLOW_RED'
+    const [onOff, inColor, outColorBot, outColorTop] = argumentBuilder(
+      'TRANSFORMTWO_YELLOW_RED_YELLOW'
     );
+
     const witness = await calculateLabeledWitness(
       circuit,
-      { grid: initialGrid, onOff, inColor, outColor },
+      { grid: initialGrid, onOff, inColor, outColorBot, outColorTop },
       sanityCheck
     );
 
@@ -49,17 +49,20 @@ describe.only('transformtwo circuit', () => {
         assert.propertyVal(
           witness,
           `main.out[${i}][${j}]`,
-          String(puzzles[0.1].transformTwo[i][j])
+          String(puzzles[0.2].transformTwo[i][j])
         );
       }
     }
   });
 
   it('has expected witness values for onOff == 0', async () => {
-    const [inColor, outColor] = argumentBuilder('TRANSFORMTWO_YELLOW_RED');
+    const [inColor, outColorBot, outColorTop] = argumentBuilder(
+      'TRANSFORMTWO_YELLOW_RED_YELLOW'
+    );
+
     const witness = await calculateLabeledWitness(
       circuit,
-      { grid: initialGrid, onOff: 0, inColor, outColor },
+      { grid: initialGrid, onOff: 0, inColor, outColorBot, outColorTop },
       sanityCheck
     );
 
@@ -75,12 +78,13 @@ describe.only('transformtwo circuit', () => {
   });
 
   it('produces expected witness values', async () => {
-    const [onOff, inColor, outColor] = argumentBuilder(
-      'TRANSFORMTWO_YELLOW_RED'
+    const [onOff, inColor, outColorBot, outColorTop] = argumentBuilder(
+      'TRANSFORMTWO_YELLOW_RED_YELLOW'
     );
+
     const witness = await calculateLabeledWitness(
       circuit,
-      { grid: initialGrid, onOff, inColor, outColor },
+      { grid: initialGrid, onOff: 0, inColor, outColorBot, outColorTop },
       sanityCheck
     );
 
@@ -93,16 +97,19 @@ describe.only('transformtwo circuit', () => {
 
   ['0.1', '0.2', '0.3', '0.4'].forEach((lvl: string) => {
     it(`transform witness values for level ${lvl} equals transform function return values`, async () => {
-      const [onOff, inColor, outColor] = argumentBuilder(
-        'TRANSFORMTWO_YELLOW_BLUE'
+      const [onOff, inColor, outColorBot, outColorTop] = argumentBuilder(
+        'TRANSFORMTWO_YELLOW_RED_YELLOW'
       );
+
       const witness = await calculateLabeledWitness(
         circuit,
-        { grid: initialGrid, onOff, inColor, outColor },
+        { grid: initialGrid, onOff, inColor, outColorBot, outColorTop },
         sanityCheck
       );
 
-      const targetGrid = gridMutator(initialGrid, ['TRANSFORMTWO_YELLOW_BLUE']);
+      const targetGrid = gridMutator(initialGrid, [
+        'TRANSFORMTWO_YELLOW_RED_YELLOW',
+      ]);
 
       for (let i = 0; i < config.gridWidth; i++) {
         for (let j = 0; j < config.gridHeight; j++) {

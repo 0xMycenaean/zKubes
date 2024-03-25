@@ -14,10 +14,13 @@ describe.only('zkube circuit', () => {
   const sanityCheck = true;
   const address = '0x123';
   const initialGrid = puzzles[0.3].initial;
+  const availableFunctionsCircuit = getCircuitFunctionIndex(
+    puzzles[0.3].availableFunctions
+  );
   const levels: { lvl: string; args: CircuitFunctions[] }[] = [
     {
       lvl: '0.1',
-      args: ['TRANSFORM_YELLOW_RED', 'STACK_RED', 'TRANSFORMTWO_RED_BLUE'],
+      args: ['TRANSFORM_YELLOW_RED', 'STACK_RED', 'TRANSFORMTWO_RED_BLUE_RED'],
     },
     {
       lvl: '0.2',
@@ -25,11 +28,19 @@ describe.only('zkube circuit', () => {
     },
     {
       lvl: '0.3',
-      args: ['STACK_RED', 'TRANSFORM_YELLOW_RED', 'TRANSFORMTWO_RED_YELLOW'],
+      args: [
+        'STACK_RED',
+        'TRANSFORM_YELLOW_RED',
+        'TRANSFORMTWO_RED_RED_YELLOW',
+      ],
     },
     {
       lvl: '0.4',
-      args: ['TRANSFORM_YELLOW_BLUE', 'STACK_RED', 'TRANSFORMTWO_RED_YELLOW'],
+      args: [
+        'TRANSFORM_YELLOW_BLUE',
+        'STACK_RED',
+        'TRANSFORMTWO_BLUE_RED_YELLOW',
+      ],
     },
   ];
 
@@ -41,18 +52,19 @@ describe.only('zkube circuit', () => {
     const targetGrid = gridMutator(initialGrid, [
       'TRANSFORM_YELLOW_RED',
       'STACK_RED',
-      'TRANSFORMTWO_RED_BLUE',
+      'TRANSFORMTWO_RED_BLUE_RED',
     ]);
     const circuitFunctionArguments = getCircuitFunctionIndex([
       'TRANSFORM_YELLOW_RED',
       'STACK_RED',
-      'TRANSFORMTWO_RED_BLUE',
+      'TRANSFORMTWO_RED_BLUE_RED',
     ]);
 
     const witness = await circuit.calculateWitness(
       {
         initialGrid: initialGrid,
         finalGrid: targetGrid,
+        availableFunctions: availableFunctionsCircuit,
         account: address,
         selectedFunctionsIndexes: circuitFunctionArguments,
       },
@@ -73,11 +85,13 @@ describe.only('zkube circuit', () => {
       'STACK_RED',
       'EMPTY',
     ]);
+
     const witness = await calculateLabeledWitness(
       circuit,
       {
         initialGrid: initialGrid,
         finalGrid: targetGrid,
+        availableFunctions: availableFunctionsCircuit,
         account: address,
         selectedFunctionsIndexes: circuitFunctionArguments,
       },
@@ -99,13 +113,13 @@ describe.only('zkube circuit', () => {
     const targetGrid = gridMutator(initialGrid, [
       'TRANSFORM_YELLOW_RED',
       'STACK_RED',
-      'TRANSFORMTWO_RED_BLUE',
+      'TRANSFORMTWO_RED_BLUE_RED',
     ]);
 
     const circuitFunctionArguments = getCircuitFunctionIndex([
       'TRANSFORM_YELLOW_RED',
       'STACK_RED',
-      'TRANSFORMTWO_RED_BLUE',
+      'TRANSFORMTWO_RED_BLUE_RED',
     ]);
 
     const witness = await calculateLabeledWitness(
@@ -113,6 +127,7 @@ describe.only('zkube circuit', () => {
       {
         initialGrid: initialGrid,
         finalGrid: targetGrid,
+        availableFunctions: availableFunctionsCircuit,
         account: address,
         selectedFunctionsIndexes: circuitFunctionArguments,
       },
@@ -121,16 +136,16 @@ describe.only('zkube circuit', () => {
 
     assert.notPropertyVal(
       witness,
-      'zkube.finalGridForPlayer[0][4]',
+      'main.finalGridForPlayer[0][4]',
       String(targetGrid[0][3])
     );
   });
 
-  it('reverts for selectedFunctionIndexes greater than 15', async () => {
+  it('reverts for selectedFunctionIndexes greater than 27', async () => {
     const targetGrid = gridMutator(initialGrid, [
       'TRANSFORM_YELLOW_RED',
       'STACK_RED',
-      'TRANSFORMTWO_RED_BLUE',
+      'TRANSFORMTWO_RED_BLUE_RED',
     ]);
 
     const witnessPromise = calculateLabeledWitness(
@@ -139,7 +154,12 @@ describe.only('zkube circuit', () => {
         initialGrid: initialGrid,
         finalGrid: targetGrid,
         account: address,
-        selectedFunctionsIndexes: [19, 1, 2],
+        availableFunctions: availableFunctionsCircuit,
+        selectedFunctionsIndexes: [
+          [0, 0, 45],
+          [1, 0, 0],
+          [2, 0, 0],
+        ],
       },
       sanityCheck
     );
@@ -157,7 +177,7 @@ describe.only('zkube circuit', () => {
     const targetGrid = gridMutator(initialGrid, [
       'TRANSFORM_YELLOW_RED',
       'STACK_RED',
-      'TRANSFORMTWO_RED_BLUE',
+      'TRANSFORMTWO_RED_BLUE_RED',
     ]);
 
     const witnessPromise = calculateLabeledWitness(
@@ -165,8 +185,13 @@ describe.only('zkube circuit', () => {
       {
         initialGrid: initialGrid,
         finalGrid: targetGrid,
+        availableFunctions: availableFunctionsCircuit,
         account: address,
-        selectedFunctionsIndexes: [1, 4, -1],
+        selectedFunctionsIndexes: [
+          [1, 0, 0],
+          [1, 0, 0],
+          [-1, 0, 0],
+        ],
       },
       sanityCheck
     );
@@ -192,6 +217,7 @@ describe.only('zkube circuit', () => {
         {
           initialGrid,
           finalGrid: targetGrid,
+          availableFunctions: availableFunctionsCircuit,
           account: address,
           selectedFunctionsIndexes: circuitFunctionArguments,
         },

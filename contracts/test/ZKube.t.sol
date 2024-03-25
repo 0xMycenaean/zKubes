@@ -29,8 +29,8 @@ contract ZKubeTest is Test {
         string memory path = string.concat(root, "/test/zkube_proof.json");
         string memory json = vm.readFile(path);
 
-        uint256[129] memory input;
-        for (uint256 i = 0; i < 129; i++) {
+        uint256[138] memory input;
+        for (uint256 i = 0; i < input.length; i++) {
             input[i] = json.readUint(string.concat(string.concat(".[3].[", Strings.toString(i)), "]"));
         }
 

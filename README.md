@@ -62,7 +62,13 @@ The **ZKubePuzzleSet** ERC721 contract defines a set of possible puzzles in a ga
 
 ## Circuits
 
-[TODO]
+The ZKube circuit is the main circuit that integrates game logic, which is divided among three separate circuits. Each of these circuits performs a distinct manipulation on the grid:
+
+- `Stack`: Stacks elements of value `color`, of type `0 | 1 | 2 | 3`, on top of the grid.
+- `Transform`: Transforms elements in the grid from value `colorIn` to `colorOut`, both of which are of type `0 | 1 | 2 | 3`.
+- `TransformTwo`: Stacks elements of value `colorOut`, of type `0 | 1 | 2 | 3`, on top of elements with value `colorIn`, of type `0 | 1 | 2 | 3`.
+
+The design of the circuits facilitates easy updates. New circuits containing manipulation logic can be seamlessly integrated into the `ZKube` circuit without the need for extensive rewrites of its logic.
 
 ## Application Architecture
 

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { groth16 } from 'snarkjs';
 import { InputSignals } from '../types/proof.types';
 

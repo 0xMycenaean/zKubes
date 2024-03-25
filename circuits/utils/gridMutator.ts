@@ -34,9 +34,10 @@ export function gridMutator(
       return gridMutator(stackGrid(grid, colorIn), args.slice(1));
     }
     case 'TRANSFORMTWO': {
-      const colorOut = selectColor(splitAtguments[2] as ArgumentColor);
+      const colorOutBot = selectColor(splitAtguments[2] as ArgumentColor);
+      const colorOutTop = selectColor(splitAtguments[3] as ArgumentColor);
       return gridMutator(
-        transformTwoGrid(grid, colorIn, colorOut),
+        transformTwoGrid(grid, colorIn, colorOutBot, colorOutTop),
         args.slice(1)
       );
     }

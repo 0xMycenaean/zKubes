@@ -1,32 +1,51 @@
 import { writeFileSync } from 'fs';
-import path from 'path';
 import { Colors, Puzzles } from '../types/circuitFunctions.types';
+import path from 'path';
 const puzzles: Puzzles = require('../test/data/puzzles.json');
 
-export function transformTwo(
-  column: Array<Colors>,
-  inColor: Colors,
-  outColor: Colors
-): Array<Colors> {
-  if (column.length === 0) {
-    return column;
-  }
+type TransformTwoArguments = {
+  column: Array<Colors>;
+  inColor: Colors;
+  outColorBot: Colors;
+  outColorTop: Colors;
+};
 
-  const { transformed, remaining } =
-    column[0] === inColor
+export function transformTwo({
+  column,
+  inColor,
+  outColorBot,
+  outColorTop,
+}: TransformTwoArguments): Array<Colors> {
+  if (column.length === 1 || column.length === 0) return column;
+
+  const [firstElement, ...restOfColumn] = column;
+
+  const { replacedElements, replacedColumn } =
+    firstElement === inColor
       ? {
-          transformed: [column[0], outColor],
-          remaining: column.slice(1, -1),
+          replacedElements: [outColorBot, outColorTop],
+          replacedColumn: restOfColumn.slice(0, -1),
         }
-      : { transformed: [column[0]], remaining: column.slice(1) };
+      : { replacedElements: [firstElement], replacedColumn: restOfColumn };
 
-  return [...transformed, ...transformTwo(remaining, inColor, outColor)];
+  return [
+    ...replacedElements,
+    ...transformTwo({
+      column: replacedColumn,
+      inColor,
+      outColorBot,
+      outColorTop,
+    }),
+  ];
 }
 
 export function transformTwoGrid(
   grid: Array<Array<Colors>>,
   inColor: Colors,
-  outColor: Colors
+  outColorBot: Colors,
+  outColorTop: Colors
 ): Array<Array<Colors>> {
-  return grid.map((col) => transformTwo(col, inColor, outColor));
+  return grid.map((column) =>
+    transformTwo({ column, inColor, outColorBot, outColorTop })
+  );
 }

@@ -5,139 +5,105 @@ include "./transform.circom";
 include "./stack.circom";
 include "./transformtwo.circom";
 
-template XNOR() {
-    signal input a;
-    signal input b;
-    signal output out;
-
-    out <== 1 - a - b + 2*a*b;
-}
-
 function indexToArgs(index) {
-    assert(index <= 15 && index>=0);
+    assert(index >= 0 && index <= 27);
+    // "EMPTY"
+    if(index == 0) {
+        return [0, 0, 0, 0];
+    }
     // "TRANSFORM_YELLOW_RED",
-    if (index == 1) {
-        return [
-            [1, 1, 2],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+    else if (index == 1) {
+        return [1, 1, 2, 0];
     // "TRANSFORM_YELLOW_BLUE",
     } else if (index == 2) {
-        return [
-            [1, 1, 3],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+        return [1, 1, 3, 0];
     // "TRANSFORM_RED_YELLOW",
     } else if (index == 3) {
-        return [
-            [1, 2, 1],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+        return [1, 2, 1, 0];
     // "TRANSFORM_RED_BLUE",
     } else if (index == 4) {
-        return [
-            [1, 2, 3],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+        return [1, 2, 3, 0];
     // "TRANSFORM_BLUE_YELLOW",
     } else if (index == 5) {
-        return [
-            [1, 3, 1],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+        return [1, 3, 1, 0];
     // "TRANSFORM_BLUE_RED",
     } else if (index == 6) {
-        return [
-            [1, 3, 2],
-            [0, 0, 0],
-            [0, 0, 0]
-        ];
+        return [1, 3, 2, 0];
     // "STACK_YELLOW",
     } else if (index == 7) {
-        return [
-            [0, 0, 0],
-            [1, 1, 0],
-            [0, 0, 0]
-        ];
+        return [1, 1, 0, 0];
     // "STACK_RED",
     } else if (index == 8) {
-        return [
-            [0, 0, 0],
-            [1, 2, 0],
-            [0, 0, 0]
-        ];
+        return [1, 2, 0, 0];
     // "STACK_BLUE",
     } else if (index == 9) {
-        return [
-            [0, 0, 0],
-            [1, 3, 0],
-            [0, 0, 0]
-        ];
-    // "TRANSFORMTWO_YELLOW_RED",
+        return [1, 3, 0, 0];
+    // 'TRANSFORMTWO_YELLOW_YELLOW_RED',
     } else if (index == 10) {
-        return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [1, 1, 2]
-        ];
-    // "TRANSFORMTWO_YELLOW_BLUE",
+        return [1, 1, 1, 2];
+    // 'TRANSFORMTWO_YELLOW_YELLOW_BLUE',
     } else if (index == 11) {
-        return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [1, 1, 3]
-        ];
-    // "TRANSFORMTWO_RED_YELLOW",
+        return [1, 1, 1, 3];
+    // 'TRANSFORMTWO_YELLOW_RED_YELLOW',
     } else if (index == 12) {
-        return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [1, 2, 1]
-        ];
-    // "TRANSFORMTWO_RED_BLUE",
+        return [1, 1, 2, 1];
+    // 'TRANSFORMTWO_YELLOW_RED_BLUE',
     } else if (index == 13) {
-        return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [1, 2, 3]
-        ];
-    // "TRANSFORMTWO_BLUE_YELLOW",
+        return [1, 1, 2, 3];
+    // 'TRANSFORMTWO_YELLOW_BLUE_YELLOW',
     } else if (index == 14) {
-        return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [1, 3, 1]
-        ];
-    // "TRANSFORMTWO_BLUE_RED",
-    } else if (index == 15) {
-        return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [1, 3, 2]
-        ];
-    }
-    // "EMPTY",
-    return [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-    ];
+        return [1, 1, 3, 1];
+    // 'TRANSFORMTWO_YELLOW_BLUE_RED',
+    } else if (index == 15) {  
+        return [1, 1, 3, 2];
+    // 'TRANSFORMTWO_RED_RED_YELLOW',
+    } else if (index == 16) {
+        return [1, 2, 2, 1];
+    // 'TRANSFORMTWO_RED_RED_BLUE',
+     } else if (index == 17) {
+        return [1, 2, 2, 3];
+    // 'TRANSFORMTWO_RED_YELLOW_RED',  
+    } else if (index == 18) {
+        return [1, 2, 1, 2];
+    // 'TRANSFORMTWO_RED_YELLOW_BLUE', 
+    } else if (index == 19) {
+        return [1, 2, 1, 3];
+    // 'TRANSFORMTWO_RED_BLUE_YELLOW', 
+    } else if (index == 20) {
+        return [1, 2, 3, 1];
+    // 'TRANSFORMTWO_RED_BLUE_RED',  
+    } else if (index == 21) {
+        return [1, 2, 3, 2];
+    // 'TRANSFORMTWO_BLUE_BLUE_YELLOW',  
+    } else if (index == 22) {
+        return [1, 3, 3, 1];
+    // 'TRANSFORMTWO_BLUE_BLUE_RED',
+    } else if (index == 23) {
+        return [1, 3, 3, 2];
+    // 'TRANSFORMTWO_BLUE_YELLOW_BLUE',
+    } else if (index == 24) {
+        return [1, 3, 1, 3];
+    // 'TRANSFORMTWO_BLUE_YELLOW_RED',
+    } else if (index == 25) {
+        return [1, 3, 1, 2];
+    // 'TRANSFORMTWO_BLUE_RED_YELLOW',
+    } else if (index == 26) {
+        return [1, 3, 2, 1];
+    // 'TRANSFORMTWO_BLUE_RED_BLUE',
+    } else if (index == 27) {
+        return [1, 3, 2, 3];
+    } 
+
+    return [0, 0, 0, 0];
 }
 
 template ZKube(W, H, F) {
     // public
     signal input initialGrid[W][H];
     signal input finalGrid[W][H];
-    // TODO: include address to prevent frontrunning
+    signal input selectedFunctionsIndexes[F][F];
+    signal input availableFunctions[F][F];
     signal input account;
-    // private
-    // F rounds of F available functions with 3 args
-    signal input selectedFunctionsIndexes[F];
     signal finalGridForPlayer[W][H];
     // F rounds for each of the Function
     component transform[F];
@@ -154,15 +120,15 @@ template ZKube(W, H, F) {
         }
     }  
 
-    signal selectedFunctions[F][F][3];
+    signal selectedFunctions[F][F][4];
     for (var i = 0; i < F; i++) {
         var indexPlusOne = i + 1;
         var indexPlusTwo = i + 2;
         
-        selectedFunctions[i] <-- indexToArgs(selectedFunctionsIndexes[i]);
-        selectedFunctions[i][i][0] === selectedFunctions[i][i][0] * selectedFunctions[i][i][0];
-        selectedFunctions[i][i][1] === selectedFunctions[i][i][0] * selectedFunctions[i][i][1];
-        selectedFunctions[i][i][2] === selectedFunctions[i][i][0] * selectedFunctions[i][i][2];
+        for (var j = 0; j < 3; j++) {
+          selectedFunctions[i][j] <-- indexToArgs(selectedFunctionsIndexes[i][j]);
+          selectedFunctions[i][j][0] === selectedFunctions[i][j][0] * selectedFunctions[i][j][0];
+        }
 
         transform[i] = Transform(W, H);
         transform[i].grid <== intermediateGrids[i][0];
@@ -181,21 +147,22 @@ template ZKube(W, H, F) {
         transformTwo[i].grid <== intermediateGrids[i][2];
         transformTwo[i].onOff <== selectedFunctions[i][2][0];
         transformTwo[i].inColor <== selectedFunctions[i][2][1];
-        transformTwo[i].outColor <== selectedFunctions[i][2][2];
+        transformTwo[i].outColorBot <== selectedFunctions[i][2][2];
+        transformTwo[i].outColorTop <== selectedFunctions[i][2][3];
 
         intermediateGrids[indexPlusOne][0] <== transformTwo[i].out;
     }
 
     finalGridForPlayer <== intermediateGrids[F][0];
 
-    component xnorGate[W][H];
-    var mask = 1;
+    component isEq[W][H];
+    var counter = 0;
     for (var i = 0; i < W; i++) {
         for (var j = 0; j < H; j++) {
-            xnorGate[i][j] = XNOR();
-            xnorGate[i][j].a <== finalGridForPlayer[i][j];
-            xnorGate[i][j].b <== finalGrid[i][j] * mask;
-            mask = xnorGate[i][j].out;
+            isEq[i][j] = IsEqual();
+            isEq[i][j].in[0] <== finalGridForPlayer[i][j];
+            isEq[i][j].in[1] <== finalGrid[i][j];
+            counter += isEq[i][j].out;
         }
     }
 
@@ -203,9 +170,9 @@ template ZKube(W, H, F) {
     // compairng the final results
     eqCheck = ForceEqualIfEnabled();
     // if not equal no proof, sorry
-    eqCheck.enabled <== 1;
-    eqCheck.in[0] <== mask;
-    eqCheck.in[1] <== 1;
+    eqCheck.enabled <== 0;
+    eqCheck.in[0] <== counter;
+    eqCheck.in[1] <== W*H;
 }
 
-component main { public [initialGrid, finalGrid, account] } = ZKube(8, 8, 3);
+component main { public [initialGrid, finalGrid, availableFunctions, account] } = ZKube(8, 8, 3);

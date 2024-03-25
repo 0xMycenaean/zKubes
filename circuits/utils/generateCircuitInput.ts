@@ -10,20 +10,24 @@ export function generateCircuitInput() {
   const targetGrid = gridMutator(initialGrid, [
     'TRANSFORM_YELLOW_RED',
     'STACK_RED',
-    'TRANSFORMTWO_RED_BLUE',
+    'TRANSFORMTWO_RED_BLUE_YELLOW',
   ]);
 
   const circuitFunctionArguments = getCircuitFunctionIndex([
     'TRANSFORM_YELLOW_RED',
     'STACK_RED',
-    'TRANSFORMTWO_RED_BLUE',
+    'TRANSFORMTWO_RED_BLUE_YELLOW',
   ]);
 
+  const availableFunctionsCircuit = getCircuitFunctionIndex(
+    puzzles[0.3].availableFunctions
+  );
   const address = '0x123';
 
   const input = {
     initialGrid,
     finalGrid: targetGrid,
+    availableFunctions: availableFunctionsCircuit,
     account: address,
     selectedFunctionsIndexes: circuitFunctionArguments,
   };

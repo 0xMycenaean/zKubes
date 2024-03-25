@@ -15,7 +15,7 @@
     "mocha": "^10.2.0"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register 'test/**/*.ts'",
+    "test": "ts-node ./run-tests.ts",
     "compile": "circom circuits/zkube.circom --r1cs --sym --wasm -o zk/ ",
     "setup:sample-zkey": "snarkjs groth16 setup zk/zkube.r1cs powersOfTau28_hez_final_15.ptau zk/zkube.zkey",
     "contribute:deterministic": "snarkjs zkey beacon ./zk/zkube.zkey ./zk/zkube_final.zkey CAFE 10 -n='Final Beacon phase2'",
@@ -25,6 +25,6 @@
     "build:dev": "yarn compile && yarn setup:sample-zkey && yarn contribute:deterministic && yarn generate:verifier",
     "generate:proof": "yarn generate:input && yarn generate:calldata",
     "export:elements": "cp ./zk/ZKubeVerifier.sol ../contracts/src && cp ./zk/zkube_proof.json ../contracts/test/zkube_proof.json && cp ./zk/zkube_final.zkey ./zk/zkube_js/zkube.wasm ../app/public/zk",
-    "build:dev:all": "yarn build:dev && generate:proof && yarn export:elements"
+    "build:dev:all": "yarn build:dev && yarn generate:proof && yarn export:elements"
   }
 }
